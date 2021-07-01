@@ -15,8 +15,6 @@ export class TaskRepository extends Repository<Task> {
       status: TaskStatus.OPEN,
     });
 
-    console.log(task);
-
     await this.save(task);
 
     return task;
@@ -24,17 +22,17 @@ export class TaskRepository extends Repository<Task> {
 
   async getTasksFilter(getTasksFilterDto: GetTasksFilterDto): Promise<Task[]> {
     const { search, status } = getTasksFilterDto;
-    const getTasksFilterQuery = this.createQueryBuilder('task');
+    const query = this.createQueryBuilder('task');
     if (search) {
-      getTasksFilterQuery.andWhere(
+      query.andWhere(
         'task.title ILIKE :search OR task.description ILIKE :search',
         { search: `%${search}%` },
       );
     }
 
     if (status) {
-      getTasksFilterQuery.andWhere('task.status = :status', { status });
+      query.andWhere('task.status = :status', { status });
     }
-    return getTasksFilterQuery.getMany();
+    return query.getMany();
   }
 }
