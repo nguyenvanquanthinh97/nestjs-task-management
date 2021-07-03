@@ -18,7 +18,6 @@ export class TaskRepository extends Repository<Task> {
     });
 
     await this.save(task);
-    delete task.user;
 
     return task;
   }
@@ -28,9 +27,7 @@ export class TaskRepository extends Repository<Task> {
     user: User,
   ): Promise<Task[]> {
     const { search, status } = getTasksFilterDto;
-    const query = this.createQueryBuilder('task').where('task.user = :userId', {
-      userId: user.id,
-    });
+    const query = this.createQueryBuilder('task').where({ user });
     if (search) {
       query.andWhere(
         'task.title ILIKE :search OR task.description ILIKE :search',
